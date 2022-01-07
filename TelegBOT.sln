@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegBOT", "TelegBOT\TelegBOT.csproj", "{FE2424B4-F50E-4C17-8C63-BFA7E0C92DEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE2424B4-F50E-4C17-8C63-BFA7E0C92DEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE2424B4-F50E-4C17-8C63-BFA7E0C92DEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE2424B4-F50E-4C17-8C63-BFA7E0C92DEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE2424B4-F50E-4C17-8C63-BFA7E0C92DEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4CB4D4D1-D189-4F6F-B7AA-4E12766102C9}
+	EndGlobalSection
+EndGlobal
