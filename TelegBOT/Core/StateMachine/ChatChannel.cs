@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TelegBOT.Core.StateMachine
 {
-    public class Bot : IBot
+    public class ChatChannel : IChannel
     {
         public BotState State { get; set; }
         public long ChatID { get ; set ; }
 
-        public Bot(long chatID, BotState bs)
+        public ChatChannel(long chatID, BotState bs)
         {
             ChatID = chatID;
             State = bs;

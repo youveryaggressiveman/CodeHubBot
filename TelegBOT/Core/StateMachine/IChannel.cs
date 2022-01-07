@@ -1,6 +1,6 @@
 ﻿namespace TelegBOT.Core.StateMachine
 {
-    public interface IBot
+    public interface IChannel
     {
         long ChatID { get; set; }
 
