@@ -1,25 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Konvy\\Source\\Repos\\CodeHubBot\\TelegBOT\\TelegBOT.csproj": {}
+    "C:\\Users\\повелитель\\source\\repos\\TelegBOT\\TelegBOT\\TelegBOT.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Konvy\\Source\\Repos\\CodeHubBot\\TelegBOT\\TelegBOT.csproj": {
+    "C:\\Users\\повелитель\\source\\repos\\TelegBOT\\TelegBOT\\TelegBOT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Konvy\\Source\\Repos\\CodeHubBot\\TelegBOT\\TelegBOT.csproj",
+        "projectUniqueName": "C:\\Users\\повелитель\\source\\repos\\TelegBOT\\TelegBOT\\TelegBOT.csproj",
         "projectName": "TelegBOT",
-        "projectPath": "C:\\Users\\Konvy\\Source\\Repos\\CodeHubBot\\TelegBOT\\TelegBOT.csproj",
-        "packagesPath": "C:\\Users\\Konvy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Konvy\\Source\\Repos\\CodeHubBot\\TelegBOT\\obj\\",
+        "projectPath": "C:\\Users\\повелитель\\source\\repos\\TelegBOT\\TelegBOT\\TelegBOT.csproj",
+        "packagesPath": "C:\\Users\\повелитель\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\повелитель\\source\\repos\\TelegBOT\\TelegBOT\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Konvy\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\повелитель\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
@@ -78,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
         }
       }
     }

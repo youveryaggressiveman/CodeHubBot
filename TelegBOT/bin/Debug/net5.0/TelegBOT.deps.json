@@ -11,7 +11,8 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "5.0.13",
           "Microsoft.EntityFrameworkCore.Tools": "5.0.13",
           "Telegram.Bot": "17.0.0",
-          "Telegram.Bot.Extensions.Polling": "1.0.0"
+          "Telegram.Bot.Extensions.Polling": "1.0.0",
+          "LoggerLib": "1.0.0.0"
         },
         "runtime": {
           "TelegBOT.dll": {}
@@ -1023,6 +1024,14 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "LoggerLib/1.0.0.0": {
+        "runtime": {
+          "LoggerLib.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -1710,6 +1719,11 @@
       "sha512": "sha512-OsUbHdHIMmldevoRYzArh5uJDVs1fzlpj+T3mddeP/ELhhhHLmcjon0ZEypgf1KFEj6QWbuZHkijauIW1LZlqg==",
       "path": "telegram.bot.extensions.polling/1.0.0",
       "hashPath": "telegram.bot.extensions.polling.1.0.0.nupkg.sha512"
+    },
+    "LoggerLib/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

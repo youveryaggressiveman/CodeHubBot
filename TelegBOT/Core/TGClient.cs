@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TelegBOT.Core.StateMachine;
@@ -14,48 +15,49 @@ namespace TelegBOT.Core
 {
     public class TGClient
     {
-        private static TelegramBotClient _client;
+        private static TelegramBotClient client;
 
-        private static List<IChannel> _chatList { get; set; }
-
-        private readonly RegHelper _regHelper;
+        public List<IChannel> BotChatList { get; set; }
+        RegHelper regHelper = new RegHelper();
 
         public TGClient()
         {
-            _chatList = new List<IChannel>();
-            _client = new TelegramBotClient(SecureData.GetToken());
-            _regHelper = new RegHelper();
+            BotChatList = new List<IChannel>();
+            client = new TelegramBotClient(SecureData.GetToken());
         }
 
         public async void StartListen()
         {
-            using CancellationTokenSource cts = new CancellationTokenSource();
-
-            ReceiverOptions receiverOptions = new ReceiverOptions()
+            using var cts = new CancellationTokenSource();
+            var receiverOptions = new ReceiverOptions()
             {
                 AllowedUpdates = { }
             };
 
-            _client.StartReceiving(HandleUpdateAsync, HandleErrorAsync, receiverOptions, cancellationToken: cts.Token);
+            client.StartReceiving(HandleUpdateAsync, HandleErrorAsync, receiverOptions, cancellationToken: cts.Token);
 
-            User me = await _client.GetMeAsync();
+            var me = await client.GetMeAsync();
 
-            Console.WriteLine($"Started receiving messages from: {me.Username}");
+            Console.WriteLine($"Начал слушать {me.Username}");
+
+            LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"Начал слушать {me.Username}");
+
+            Console.ReadLine();
 
             cts.Cancel();
         }
 
-        public void AddChatUser(long chatId, BotState bs)
+        public void AddChatUser(long chatID, BotState bs)
         {
-            foreach (IChannel item in _chatList)
+            foreach (var item in BotChatList)
             {
-                if (item.ChatID == chatId)
+                if (item.ChatID == chatID)
                 {
                     return;
                 }
             }
 
-            _chatList.Add(new ChatChannel(chatId, bs));
+            BotChatList.Add(new ChatChannel(chatID, bs));
         }
 
         public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -70,18 +72,20 @@ namespace TelegBOT.Core
                 return;
             }
 
-            long chatId = update.Message.Chat.Id;
-            string messageText = update.Message.Text;
+            var chatId = update.Message.Chat.Id;
+            var messageText = update.Message.Text;
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
+            await LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"Received a '{messageText}' message in chat {chatId}.");
+
             AddChatUser(chatId, BotState.HANDLE_COMMAND);
 
-            switch (_chatList.FirstOrDefault(b => b.ChatID == chatId).State)
+
+            switch (BotChatList.FirstOrDefault(b => b.ChatID == chatId).State)
             {
                 case BotState.HANDLE_REGISTER_ANSWER:
-                    bool result = _regHelper.Registration(messageText, chatId);
-
+                    var result = regHelper.Registration(messageText);
                     if (result == false)
                     {
                         await botClient.SendTextMessageAsync(
@@ -89,24 +93,18 @@ namespace TelegBOT.Core
                             text: "Неверный формат ФИО. Попробуйте еще раз.",
                             cancellationToken: cancellationToken
                             );
-
-                        ChangeState(_chatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
-
+                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
                         return;
                     }
-
-                    ChangeState(_chatList, BotState.HANDLE_REGISTER_GROUP, chatId);
-
+                    ChangeState(BotChatList, BotState.HANDLE_REGISTER_GROUP, chatId);
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
                         text: "Введите ваше группу: ",
                         cancellationToken: cancellationToken
                         );
-
                     return;
                 case BotState.HANDLE_REGISTER_GROUP:
-                    bool groupResult = await _regHelper.SetGroup(messageText);
-
+                    var groupResult = await regHelper.SetGroup(messageText);
                     if (groupResult == false)
                     {
                         await botClient.SendTextMessageAsync(
@@ -114,12 +112,10 @@ namespace TelegBOT.Core
                             text: "Неверный формат группы. Попробуйте еще раз.",
                             cancellationToken: cancellationToken
                             );
-                        ChangeState(_chatList, BotState.HANDLE_REGISTER_GROUP, chatId);
+                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_GROUP, chatId);
                         return;
                     }
-
-                    ChangeState(_chatList, BotState.HANDLE_REGISTER_COURSE, chatId);
-
+                    ChangeState(BotChatList, BotState.HANDLE_REGISTER_COURSE, chatId);
                     ReplyKeyboardMarkup replyKeyboardMarkup = new(new[] {
                         new KeyboardButton[]{
                             "Мобильная разработка"
@@ -131,18 +127,15 @@ namespace TelegBOT.Core
                             "Разработка комплексных ИС"
                         },
                     });
-
                     await botClient.SendTextMessageAsync(
                            chatId: chatId,
                            text: "Выберите направление.",
                            replyMarkup: replyKeyboardMarkup,
                            cancellationToken: cancellationToken
                            );
-
                     break;
                 case BotState.HANDLE_REGISTER_COURSE:
-                    bool courseResult = _regHelper.SetCource(messageText);
-
+                    var courseResult = regHelper.SetCource(messageText);
                     if (courseResult == false)
                     {
                         await botClient.SendTextMessageAsync(
@@ -150,56 +143,51 @@ namespace TelegBOT.Core
                             text: "Произошла ошибка, попробуйте еще раз.",
                             cancellationToken: cancellationToken
                             );
-                        ChangeState(_chatList, BotState.HANDLE_REGISTER_COURSE, chatId);
+                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_COURSE, chatId);
                         return;
                     }
-
                     ReplyKeyboardMarkup replyKeyboardConfirm = new(new[] {
                         new KeyboardButton[]{
                             "Да",
                             "Нет"
                         },
                     });
-
                     await botClient.SendTextMessageAsync(
                            chatId: chatId,
-                           text: $"Вы {_regHelper.User.FirstName} {_regHelper.User.SecondName} {_regHelper.User.LastName} из группы {_regHelper.User.GroupByCollege.Name}?",
+                           text: $"Вы {regHelper.User.FirstName} {regHelper.User.SecondName} {regHelper.User.LastName} из группы {regHelper.User.GroupByCollege.Name}?",
                            replyMarkup: replyKeyboardConfirm,
+
                            cancellationToken: cancellationToken
                            );
-
-                    ChangeState(_chatList, BotState.HANDLE_REGISTER_CONFIRM, chatId);
-
+                    ChangeState(BotChatList, BotState.HANDLE_REGISTER_CONFIRM, chatId);
                     return;
                 case BotState.HANDLE_REGISTER_CONFIRM:
                     if (messageText == "Да")
                     {
-                        await _regHelper.SaveUser();
-
+                        await regHelper.SaveUser();
                         await botClient.SendTextMessageAsync(
                            chatId: chatId,
                            text: "Вы успешно зарегестрировались!",
                            cancellationToken: cancellationToken
                            );
-                        ChangeState(_chatList, BotState.HANDLE_COMMAND, chatId);
+                        ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                     }
-
                     if (messageText == "Нет")
                     {
-                        await _regHelper.SaveUser();
-
+                        await regHelper.SaveUser();
                         await botClient.SendTextMessageAsync(
                            chatId: chatId,
                            text: "Регистрация отменена",
                            cancellationToken: cancellationToken
                            );
-                        ChangeState(_chatList, BotState.HANDLE_COMMAND, chatId);
+                        ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                     }
-
                     return;
+                default:
+                    break;
             }
 
-            if (_chatList.FirstOrDefault(b => b.ChatID == chatId).State is BotState.HANDLE_COMMAND)
+            if (BotChatList.FirstOrDefault(b => b.ChatID == chatId).State is BotState.HANDLE_COMMAND)
             {
                 switch (messageText)
                 {
@@ -209,10 +197,9 @@ namespace TelegBOT.Core
                             text: "Введите ваше ФИО (разделив одним пробелом): ",
                             cancellationToken: cancellationToken
                             );
-
-                        ChangeState(_chatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
-
+                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
                         break;
+
                     default:
                         await botClient.SendTextMessageAsync(
                            chatId: chatId,
@@ -231,9 +218,9 @@ namespace TelegBOT.Core
             bots.FirstOrDefault(b => b.ChatID == chatId).SetState(bs);
         }
 
-        public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            string ErrorMessage = exception switch
+            var ErrorMessage = exception switch
             {
                 ApiRequestException apiRequestException
                     => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
@@ -241,7 +228,10 @@ namespace TelegBOT.Core
             };
 
             Console.WriteLine(ErrorMessage);
-            return Task.CompletedTask;
+
+            await LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, ErrorMessage);
+
         }
     }
 }
+

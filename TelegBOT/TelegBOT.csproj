@@ -19,4 +19,10 @@
     <Folder Include="Entity\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="LoggerLib">
+      <HintPath>..\..\LoggerLib\LoggerLib\bin\Debug\netcoreapp3.1\LoggerLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

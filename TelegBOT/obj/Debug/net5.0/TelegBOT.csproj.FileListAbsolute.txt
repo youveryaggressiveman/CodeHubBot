@@ -67,3 +67,5 @@ C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\Te
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\ref\TelegBOT.dll
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.pdb
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.genruntimeconfig.cache
+C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\LoggerLib.dll
+C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\LoggerLib.pdb
