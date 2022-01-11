@@ -69,3 +69,5 @@ C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\Te
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.genruntimeconfig.cache
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\LoggerLib.dll
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\LoggerLib.pdb
+C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\Castle.Core.dll
+C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Proxies.dll

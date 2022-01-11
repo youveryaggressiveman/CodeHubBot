@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using TelegBOT.Entity;
 using TelegBOT.Models;
 
 namespace TelegBOT.Core
@@ -15,13 +14,13 @@ namespace TelegBOT.Core
 
         public RegHelper()
         {
-            db = new BotContext();
+            db = EntitySinglton.GetContext().Value;
         }
 
         public User User { get; set; }
         public GroupByCollege GroupByCollege { get; set; }
 
-        public bool Registration(string response)
+        public bool Registration(string response, long chatID)
         {
             var check = Regex.IsMatch(response, "(^[A-Z]{1}[a-z]{1,14} [A-Z]{1}[a-z]{1,14} [A-Z]{1}[a-z]{1,14}$)|(^[А-Я]{1}[а-я]{1,14} [А-Я]{1}[а-я]{1,14} [А-Я]{1}[а-я]{1,14}$)");
 
@@ -37,7 +36,8 @@ namespace TelegBOT.Core
                 SecondName = result[0],
                 FirstName = result[1],
                 LastName = result[2],
-                TelegramId = "1",
+                TelegramId = chatID.ToString(),
+                UserStatusId = 1,
                 RoleId = 1,
             };
 

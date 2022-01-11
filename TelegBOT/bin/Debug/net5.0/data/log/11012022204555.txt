@@ -1,0 +1,6 @@
+Received a '/about' message in chat 853305559.
+
+Telegram API Error:
+[400]
+Bad Request: message text is empty
+

@@ -20,9 +20,11 @@ namespace TelegBOT.Models
         public string TelegramId { get; set; }
         public int RoleId { get; set; }
         public int GroupByCollegeId { get; set; }
+        public int? UserStatusId { get; set; }
 
         public virtual GroupByCollege GroupByCollege { get; set; }
         public virtual Role Role { get; set; }
+        public virtual UserStatus UserStatus { get; set; }
         public virtual ICollection<GroupByGuildOfUser> GroupByGuildOfUsers { get; set; }
         public virtual ICollection<HeadOfGroup> HeadOfGroups { get; set; }
     }

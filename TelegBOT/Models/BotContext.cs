@@ -23,11 +23,13 @@ namespace TelegBOT.Models
         public virtual DbSet<HeadOfGroup> HeadOfGroups { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserStatus> UserStatuses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
+                optionsBuilder.UseLazyLoadingProxies();
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=31.44.0.51;Initial Catalog=Bot;Persist Security Info=False;User ID=clown;Password=Billy4You!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
             }
@@ -145,6 +147,8 @@ namespace TelegBOT.Models
                     .HasMaxLength(100)
                     .HasColumnName("TelegramID");
 
+                entity.Property(e => e.UserStatusId).HasColumnName("UserStatusID");
+
                 entity.HasOne(d => d.GroupByCollege)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.GroupByCollegeId)
@@ -156,6 +160,24 @@ namespace TelegBOT.Models
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__User__RoleID__32E0915F");
+
+                entity.HasOne(d => d.UserStatus)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.UserStatusId)
+                    .HasConstraintName("FK_User_UserStatus");
+            });
+
+            modelBuilder.Entity<UserStatus>(entity =>
+            {
+                entity.ToTable("UserStatus");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -1,16 +1,23 @@
 ﻿using LoggerLib.Core.Services;
 using System;
 using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
 using TelegBOT.Core;
 
-namespace TelegBOT.Entity
+namespace TelegBOT.Core
 {
     class Program
     {
-        static void Main(string[] args)
+
+        private static async Task StartBot()
         {
             TGClient client = new TGClient();
 
+            await client.StartListen();
+        }
+
+        static void Main(string[] args)
+        {
             IDirectoryManager directoryManager = new DirectoryManager(new System.IO.DirectoryInfo("data/log"));
 
             var dr = directoryManager.Initialize();
@@ -21,7 +28,7 @@ namespace TelegBOT.Entity
 
             LoggerSinglton.DirectoryInfo = dr;
 
-            client.StartListen();
+            StartBot();
 
             Console.ReadKey();
         }

@@ -19,6 +19,8 @@ namespace TelegBOT.Core
 
         public List<IChannel> BotChatList { get; set; }
         RegHelper regHelper = new RegHelper();
+        UserHelper userHelper = new UserHelper();
+        BroadcastHelper broadcastHelper = new BroadcastHelper();
 
         public TGClient()
         {
@@ -26,7 +28,7 @@ namespace TelegBOT.Core
             client = new TelegramBotClient(SecureData.GetToken());
         }
 
-        public async void StartListen()
+        public async Task StartListen()
         {
             using var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions()
@@ -40,7 +42,7 @@ namespace TelegBOT.Core
 
             Console.WriteLine($"Начал слушать {me.Username}");
 
-            LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"Начал слушать {me.Username}");
+            await LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"Начал слушать {me.Username}");
 
             Console.ReadLine();
 
@@ -81,11 +83,100 @@ namespace TelegBOT.Core
 
             AddChatUser(chatId, BotState.HANDLE_COMMAND);
 
+            if (messageText.StartsWith("/broadcast"))
+            {
+                var user = await userHelper.DBUSer(chatId);
+                var array = messageText.Split(" ");
+                string message = "";
+                
+                if (user.Role.Id == 1)
+                {
+                    await botClient.SendTextMessageAsync(
+                           chatId: chatId,
+                           text: "У вас недостаточно прав для этой команды",
+                           parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                           cancellationToken: cancellationToken
+                           );
+
+                    return;
+                }
+
+                if (array.Length < 3)
+                {
+                    await botClient.SendTextMessageAsync(
+                           chatId: chatId,
+                           text: "Неверный формат команды",
+                           parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                           cancellationToken: cancellationToken
+                           );
+
+                    return;
+                }
+
+                if (!(int.TryParse(array[1], out var number) || array[1] == "*"))
+                {
+                    await botClient.SendTextMessageAsync(
+                           chatId: chatId,
+                           text: "Неверный формат навправления",
+                           parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                           cancellationToken: cancellationToken
+                           );
+
+                    return;
+                } 
+
+                for (int i = 2; i < array.Length; i++)
+                {
+                    message += array[i] + " ";
+                }
+
+                if (array[1] == "*")
+                {
+                    if (user.Role.Id == 3)
+                    {
+                        foreach (var item in await userHelper.GetAllUsersAsync())
+                        {
+                            await botClient.SendTextMessageAsync(
+                               chatId: item.TelegramId,
+                               text: message,
+                               parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                               cancellationToken: cancellationToken
+                               );   
+                        }
+                        return;
+                    }
+
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(
+                           chatId: chatId,
+                           text: "У вас недостаточно прав для этой команды",
+                           parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                           cancellationToken: cancellationToken
+                           );
+                    }
+                    return;
+                } 
+
+                var userList = broadcastHelper.GetUserByDir(Convert.ToInt32(array[1]));
+
+                foreach (var item in userList)
+                {
+                    await botClient.SendTextMessageAsync(
+                            chatId: item.TelegramId,
+                            text: message,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                            cancellationToken: cancellationToken
+                            );
+                }
+
+                return;
+            }
 
             switch (BotChatList.FirstOrDefault(b => b.ChatID == chatId).State)
             {
                 case BotState.HANDLE_REGISTER_ANSWER:
-                    var result = regHelper.Registration(messageText);
+                    var result = regHelper.Registration(messageText, chatId);
                     if (result == false)
                     {
                         await botClient.SendTextMessageAsync(
@@ -154,7 +245,7 @@ namespace TelegBOT.Core
                     });
                     await botClient.SendTextMessageAsync(
                            chatId: chatId,
-                           text: $"Вы {regHelper.User.FirstName} {regHelper.User.SecondName} {regHelper.User.LastName} из группы {regHelper.User.GroupByCollege.Name}?",
+                           text: $"Вы {regHelper.User.SecondName} {regHelper.User.FirstName} {regHelper.User.LastName} из группы {regHelper.User.GroupByCollege.Name}?",
                            replyMarkup: replyKeyboardConfirm,
 
                            cancellationToken: cancellationToken
@@ -183,6 +274,16 @@ namespace TelegBOT.Core
                         ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                     }
                     return;
+                case BotState.HANDLE_CHANGE_FIO:
+                    var userRefresh = await userHelper.RefreshUser(chatId, messageText);
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                       text: $"*Ваше новое ФИО*: {userRefresh.SecondName} {userRefresh.FirstName} {userRefresh.LastName} 🤡",
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                        cancellationToken: cancellationToken
+                        );
+                    ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
+                    return;
                 default:
                     break;
             }
@@ -191,6 +292,22 @@ namespace TelegBOT.Core
             {
                 switch (messageText)
                 {
+                    case "/start":
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: " ",
+                            cancellationToken: cancellationToken
+                            );
+                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
+                        break;
+                    case "/about":
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: "Бот разработан @youveryaggressiveman и @grakhov",
+                            cancellationToken: cancellationToken
+                            );
+                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
+                        break;
                     case "/reg":
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
@@ -198,6 +315,40 @@ namespace TelegBOT.Core
                             cancellationToken: cancellationToken
                             );
                         ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
+                        break;
+                    case "/userinfo":
+                        var user = await userHelper.DBUSer(chatId);
+                        string directions = "";
+                        string head = "";
+
+                        foreach (var item in user.GroupByGuildOfUsers)
+                        {
+                            directions += item.GroupByGuild.Name + ";";
+
+                            foreach (var itemHead in item.GroupByGuild.HeadOfGroups)
+                            {
+                                head += itemHead.Head.SecondName + " " + itemHead.Head.FirstName + " " + itemHead.Head.LastName + ";";
+                            }
+                        }
+
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: $"*Ваше ФИО*: {user.SecondName} {user.FirstName} {user.LastName} 🤡\n" +
+                            $"*Ваше направление*: {directions}\n" +
+                            $"*Ваши руководители*: {head}",
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                            cancellationToken: cancellationToken
+                            );
+                        ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
+                        break;
+                    case "/change":
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: "Введите вашу ФИО (разделив одним пробелом) для изменения: ",
+                            cancellationToken: cancellationToken
+                            );
+                        ChangeState(BotChatList, BotState.HANDLE_CHANGE_FIO, chatId);
+                       
                         break;
 
                     default:

@@ -1,0 +1,12 @@
+Received a '/reg' message in chat 853305559.
+
+Received a 'Федосеев Андрей Юрьевич' message in chat 853305559.
+
+Received a 'ИС-32' message in chat 853305559.
+
+Received a 'Разработка комплексных ИС' message in chat 853305559.
+
+Received a 'Да' message in chat 853305559.
+
+Received a '/about' message in chat 853305559.
+
