@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace TelegBOT.Models
+namespace TelegBOT.Entity
 {
-    public partial class UserStatus
+    public partial class Role
     {
-        public UserStatus()
+        public Role()
         {
             Users = new HashSet<User>();
         }

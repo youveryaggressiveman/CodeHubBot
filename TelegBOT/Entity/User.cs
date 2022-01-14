@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace TelegBOT.Models
+namespace TelegBOT.Entity
 {
     public partial class User
     {
@@ -21,6 +21,8 @@ namespace TelegBOT.Models
         public int RoleId { get; set; }
         public int GroupByCollegeId { get; set; }
         public int? UserStatusId { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
 
         public virtual GroupByCollege GroupByCollege { get; set; }
         public virtual Role Role { get; set; }

@@ -83,6 +83,19 @@ namespace TelegBOT.Core
 
             AddChatUser(chatId, BotState.HANDLE_COMMAND);
 
+            if (messageText == "/cancel")
+            {
+                ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
+
+                await botClient.SendTextMessageAsync(
+                           chatId: chatId,
+                           text: "Операция отменена",
+                           parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                           cancellationToken: cancellationToken
+                           );
+                return;
+            }
+
             if (messageText.StartsWith("/broadcast"))
             {
                 var user = await userHelper.DBUSer(chatId);
@@ -169,6 +182,7 @@ namespace TelegBOT.Core
                             cancellationToken: cancellationToken
                             );
                 }
+                await LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"User {chatId} sent a broadcast: {message}");
 
                 return;
             }
@@ -181,7 +195,7 @@ namespace TelegBOT.Core
                     {
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
-                            text: "Неверный формат ФИО. Попробуйте еще раз.",
+                            text: "Неверный формат ФИО или вы уже зарегистрированы. Попробуйте еще раз.",
                             cancellationToken: cancellationToken
                             );
                         ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
@@ -208,20 +222,24 @@ namespace TelegBOT.Core
                     }
                     ChangeState(BotChatList, BotState.HANDLE_REGISTER_COURSE, chatId);
                     ReplyKeyboardMarkup replyKeyboardMarkup = new(new[] {
-                        new KeyboardButton[]{
+                        new KeyboardButton[] {
                             "Мобильная разработка"
                         },
-                        new KeyboardButton[]{
+                        new KeyboardButton[] {
                             "Разработка desktop-приложений"
                         },
-                         new KeyboardButton[]{
+                        new KeyboardButton[] {
                             "Разработка комплексных ИС"
                         },
-                    });
+                    })
+                    {
+                        ResizeKeyboard = true,
+                    };
                     await botClient.SendTextMessageAsync(
                            chatId: chatId,
                            text: "Выберите направление.",
                            replyMarkup: replyKeyboardMarkup,
+                           
                            cancellationToken: cancellationToken
                            );
                     break;
@@ -231,9 +249,10 @@ namespace TelegBOT.Core
                     {
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
+                            replyMarkup: new ReplyKeyboardRemove(),
                             text: "Произошла ошибка, попробуйте еще раз.",
                             cancellationToken: cancellationToken
-                            );
+                            ) ;
                         ChangeState(BotChatList, BotState.HANDLE_REGISTER_COURSE, chatId);
                         return;
                     }
@@ -242,7 +261,10 @@ namespace TelegBOT.Core
                             "Да",
                             "Нет"
                         },
-                    });
+                    })
+                    {
+                        ResizeKeyboard = true,
+                    };
                     await botClient.SendTextMessageAsync(
                            chatId: chatId,
                            text: $"Вы {regHelper.User.SecondName} {regHelper.User.FirstName} {regHelper.User.LastName} из группы {regHelper.User.GroupByCollege.Name}?",
@@ -258,9 +280,13 @@ namespace TelegBOT.Core
                         await regHelper.SaveUser();
                         await botClient.SendTextMessageAsync(
                            chatId: chatId,
-                           text: "Вы успешно зарегестрировались!",
+                           replyMarkup: new ReplyKeyboardRemove(),
+                           text: "Вы успешно зарегистрировались!",
                            cancellationToken: cancellationToken
                            );
+
+                        await LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"User {chatId} successfully registered");
+
                         ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                     }
                     if (messageText == "Нет")
@@ -268,9 +294,12 @@ namespace TelegBOT.Core
                         await regHelper.SaveUser();
                         await botClient.SendTextMessageAsync(
                            chatId: chatId,
+                           replyMarkup: new ReplyKeyboardRemove(),
                            text: "Регистрация отменена",
                            cancellationToken: cancellationToken
                            );
+                        await LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"User {chatId} canceled registration");
+
                         ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                     }
                     return;
@@ -278,10 +307,12 @@ namespace TelegBOT.Core
                     var userRefresh = await userHelper.RefreshUser(chatId, messageText);
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
-                       text: $"*Ваше новое ФИО*: {userRefresh.SecondName} {userRefresh.FirstName} {userRefresh.LastName} 🤡",
+                       text: $"*Ваше новое ФИО*: {userRefresh.SecondName} {userRefresh.FirstName} {userRefresh.LastName}",
                         parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
                         cancellationToken: cancellationToken
                         );
+                    await LoggerSinglton.GetFileManager().WriteToFile(LoggerSinglton.FileInfo, $"User {chatId} changed credentials");
+
                     ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                     return;
                 default:
@@ -295,10 +326,12 @@ namespace TelegBOT.Core
                     case "/start":
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
-                            text: " ",
+                            text: "Гильдия программистов *CodeHub*\n",
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
                             cancellationToken: cancellationToken
                             );
-                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
+
+                        ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                         break;
                     case "/about":
                         await botClient.SendTextMessageAsync(
@@ -306,7 +339,7 @@ namespace TelegBOT.Core
                             text: "Бот разработан @youveryaggressiveman и @grakhov",
                             cancellationToken: cancellationToken
                             );
-                        ChangeState(BotChatList, BotState.HANDLE_REGISTER_ANSWER, chatId);
+                        ChangeState(BotChatList, BotState.HANDLE_COMMAND, chatId);
                         break;
                     case "/reg":
                         await botClient.SendTextMessageAsync(
@@ -333,7 +366,7 @@ namespace TelegBOT.Core
 
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
-                            text: $"*Ваше ФИО*: {user.SecondName} {user.FirstName} {user.LastName} 🤡\n" +
+                            text: $"*Ваше ФИО*: {user.SecondName} {user.FirstName} {user.LastName}\n" +
                             $"*Ваше направление*: {directions}\n" +
                             $"*Ваши руководители*: {head}",
                             parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,

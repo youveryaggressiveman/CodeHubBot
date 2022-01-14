@@ -57,7 +57,6 @@ C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\ru
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
-C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.csprojAssemblyReference.cache
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.AssemblyInfoInputs.cache
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.AssemblyInfo.cs
@@ -71,3 +70,4 @@ C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\Lo
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\LoggerLib.pdb
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\Castle.Core.dll
 C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Proxies.dll
+C:\Users\повелитель\source\repos\TelegBOT\TelegBOT\obj\Debug\net5.0\TelegBOT.csproj.AssemblyReference.cache

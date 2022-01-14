@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace TelegBOT.Models
+namespace TelegBOT.Entity
 {
     public partial class GroupByGuildOfUser
     {

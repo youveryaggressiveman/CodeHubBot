@@ -1,2 +1,0 @@
-Received a '/broadcast' message in chat 1621069798.
-

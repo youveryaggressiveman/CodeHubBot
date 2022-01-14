@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TelegBOT.Entity;
 using TelegBOT.Models;
 
 namespace TelegBOT.Core
@@ -20,9 +21,16 @@ namespace TelegBOT.Core
         public User User { get; set; }
         public GroupByCollege GroupByCollege { get; set; }
 
-        public bool Registration(string response, long chatID)
+        public  bool Registration(string response, long chatID)
         {
             var check = Regex.IsMatch(response, "(^[A-Z]{1}[a-z]{1,14} [A-Z]{1}[a-z]{1,14} [A-Z]{1}[a-z]{1,14}$)|(^[А-Я]{1}[а-я]{1,14} [А-Я]{1}[а-я]{1,14} [А-Я]{1}[а-я]{1,14}$)");
+
+            var userList =  db.Users.Where(user => user.TelegramId == chatID.ToString());
+
+            if (userList.Count() > 0)
+            {
+                return false;
+            }
 
             if (check == false)
             {

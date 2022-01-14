@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace TelegBOT.Models
+namespace TelegBOT.Entity
 {
     public partial class BotContext : DbContext
     {
@@ -135,6 +135,10 @@ namespace TelegBOT.Models
                 entity.Property(e => e.LastName)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.Login).HasMaxLength(50);
+
+                entity.Property(e => e.Password).HasMaxLength(50);
 
                 entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
